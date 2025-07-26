@@ -1,0 +1,7 @@
+[flake8]
+# Respect 2-space indentation preference and ignore cosmetic whitespace issues
+ignore = E111,E114,E117,E121,W291,W293
+extend-ignore = E501
+# Other standard Python style checks remain active
+max-line-length = 100
+exclude = venv/,__pycache__/
