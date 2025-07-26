@@ -1,0 +1,89 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+      # target: dev        # Uncomment for development mode
+    tty: true
+    ports:
+      - "3000:3000"     # Production (npm serve)
+    #   - "5173:5173"   # Development (vite dev server)
+    #   - "9229:9229"   # Debug
+    # environment:
+    #   - NODE_OPTIONS=--inspect=0.0.0.0:9229
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./gemini-backend
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+    networks:
+      - app-network
+
+  agent-library:
+    build:
+      context: ./agent-library
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - "8001:8001"
+    environment:
+      - PYTHONPATH=/app
+    networks:
+      - app-network
+
+
+
+  claude-cli:
+    build:
+      context: ./local/claude-env
+      dockerfile: Dockerfile
+    # container_name: claude-dev-agentic-ai
+    volumes:
+      # Mount your project directory (adjust the path as needed)
+      - ./:/app/project
+      # - ../.claude/:/app/project/.claude
+      # Persistent volume for node_modules and dependencies
+      - claude_deps:/cache
+      # Optional: Mount your home directory's .anthropic config if you have one
+      - ${HOME}/.anthropic:/home/claude/.anthropic:ro
+      - ${HOME}/.config/claude:/home/claude/.claude
+      # - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /app/project
+    environment:
+      # NPM configuration for persistent caching
+      NPM_CONFIG_PREFIX: /cache/npm-global
+      NPM_CONFIG_CACHE: /cache/npm-cache
+      NODE_PATH: /cache/npm-global/lib/node_modules
+      PATH: /cache/npm-global/bin:$PATH
+      # You can set your API key here or pass it at runtime
+      # ANTHROPIC_API_KEY: your_api_key_here    stdin_open: true
+    tty: true
+    # ports:
+      # - "3000-3010:3000-3010"
+      # - "5170-5180:5170-5180"
+      # - "8000:8000"
+      # - "8080-8090:8080-8090"
+    networks:
+      - app-network
+    command: bash
+
+
+
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  plugins_data:
+  claude_deps:
+    driver: local
