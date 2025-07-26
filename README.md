@@ -19,13 +19,19 @@ Welcome! This repository is your starting point for the **Agentic AI App Hackath
 1. **Clone / Fork** this template.  Very Important. Fork Name MUST be the same name as the teamn name
 2. **Install dependencies**  
    ```bash
-   # Conda
-   conda env create -f environment.yml
-   conda activate agentic-hackathon
+   # Docker Compose (Recommended)
+   docker-compose up --build
+   
+   # Access the app at:
+   # Frontend: http://localhost:3000 (npm serve)
+   # Backend API: http://localhost:8000
+   # Agent Library: http://localhost:8001
 
-   #—or Docker—
-   docker build -t agentic-agent .
-   docker run --rm -it agentic-agent bash
+   #—or Manual Setup—
+   # Frontend
+   cd frontend && npm install && npm run dev
+   # Backend  
+   cd gemini-backend && pip install -r requirements.txt && python main.py
 
 ## 📂 Folder Layout
 
